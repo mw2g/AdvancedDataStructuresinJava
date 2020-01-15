@@ -168,20 +168,45 @@ public class Maze {
 		// Initialize everything
 		MazeNode start = cells[startRow][startCol];
 		MazeNode goal = cells[endRow][endCol];
+		HashMap<MazeNode, MazeNode> parentMap = new HashMap<MazeNode, MazeNode>();
 
 		if (start == null || goal == null) {
 			System.out.println("Start or goal node is null!  No path exists.");
 			return new LinkedList<MazeNode>();
 		}
 
-		HashMap<MazeNode, MazeNode> parentMap = new HashMap<MazeNode, MazeNode>();
+
+		// Do the search
+		
+		if (!dfsSearch(start, goal, parentMap)) {
+			System.out.println("No path exists");
+			return new LinkedList<MazeNode>();
+		}
+		
+		// reconstruct the path
+		
+		return reconstructPath(start, goal, parentMap);
+	}
+	
+	private LinkedList<MazeNode> reconstructPath(MazeNode start, MazeNode goal, HashMap<MazeNode, MazeNode> parentMap){
+		
+		LinkedList<MazeNode> path = new LinkedList<MazeNode>();
+		MazeNode curr = goal;
+		while (curr != start) {
+			path.addFirst(curr);
+			curr = parentMap.get(curr);
+		}
+		path.addFirst(start);
+		return path;
+	}
+	
+	private boolean dfsSearch(MazeNode start, MazeNode goal, HashMap<MazeNode, MazeNode> parentMap) {
 		
 		HashSet<MazeNode> visited = new HashSet<MazeNode>();
 		Stack<MazeNode> toExplore = new Stack<MazeNode>();
 		toExplore.push(start);
+		
 		boolean found = false;
-
-		// Do the search
 		while (!toExplore.empty()) {
 			MazeNode curr = toExplore.pop();
 			if (curr == goal) {
@@ -199,23 +224,10 @@ public class Maze {
 				}
 			}
 		}
+		return found;
 		
-		if (!found) {
-			System.out.println("No path exists");
-			return new LinkedList<MazeNode>();
-		}
-
-		// reconstruct the path
-		LinkedList<MazeNode> path = new LinkedList<MazeNode>();
-		MazeNode curr = goal;
-		while (curr != start) {
-			path.addFirst(curr);
-			curr = parentMap.get(curr);
-		}
-		path.addFirst(start);
-		return path;
+		
 	}
-	
 	
 	/** breadth first search from (startRow,startCol) to (endRow,endCol)
 	 * 

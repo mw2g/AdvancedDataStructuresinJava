@@ -8,12 +8,20 @@
 package roadgraph;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import geography.GeographicPoint;
 import util.GraphLoader;
+import week3example.MazeNode;
 
 /**
  * @author UCSD MOOC development team and YOU
@@ -24,14 +32,16 @@ import util.GraphLoader;
  */
 public class MapGraph {
 	//TODO: Add your member variables here in WEEK 3
-	
-	
+	private Set<GeographicPoint> vertices;
+	private Map<GeographicPoint,List<Edge>> map;
 	/** 
 	 * Create a new empty MapGraph 
 	 */
 	public MapGraph()
 	{
 		// TODO: Implement in this constructor in WEEK 3
+		vertices = new HashSet<>();
+		map = new HashMap<GeographicPoint,List<Edge>>();
 	}
 	
 	/**
@@ -41,7 +51,7 @@ public class MapGraph {
 	public int getNumVertices()
 	{
 		//TODO: Implement this method in WEEK 3
-		return 0;
+		return vertices.size();
 	}
 	
 	/**
@@ -51,7 +61,7 @@ public class MapGraph {
 	public Set<GeographicPoint> getVertices()
 	{
 		//TODO: Implement this method in WEEK 3
-		return null;
+		return vertices;
 	}
 	
 	/**
@@ -61,7 +71,13 @@ public class MapGraph {
 	public int getNumEdges()
 	{
 		//TODO: Implement this method in WEEK 3
-		return 0;
+		
+		int numEdges = 0;
+		
+		for (GeographicPoint geographicPoint : vertices) {
+			numEdges += map.get(geographicPoint).size();
+		}
+		return numEdges;
 	}
 
 	
@@ -76,7 +92,9 @@ public class MapGraph {
 	public boolean addVertex(GeographicPoint location)
 	{
 		// TODO: Implement this method in WEEK 3
-		return false;
+		List<Edge> edgeList = new ArrayList<>();
+		map.put(location, edgeList);
+		return vertices.add(location);
 	}
 	
 	/**
@@ -95,6 +113,10 @@ public class MapGraph {
 			String roadType, double length) throws IllegalArgumentException {
 
 		//TODO: Implement this method in WEEK 3
+		
+		Edge edge = new Edge(to, roadName, roadType, length);
+		map.get(from).add(edge);
+		
 		
 	}
 	
@@ -127,10 +149,60 @@ public class MapGraph {
 		
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
+		
+		if (start == null || goal == null) {
+			System.out.println("Start or goal node is null!  No path exists.");
+			return new LinkedList<GeographicPoint>();
+		}
+		
+		HashSet<GeographicPoint> visited = new HashSet<GeographicPoint>();
+		Queue<GeographicPoint> toExplore = new LinkedList<GeographicPoint>();
+		HashMap<GeographicPoint, GeographicPoint> parentMap = new HashMap<GeographicPoint, GeographicPoint>();
+		toExplore.add(start);
+		boolean found = false;
+		while (!toExplore.isEmpty()) {
+			GeographicPoint curr = toExplore.remove();
+			if (curr == goal) {
+				found = true;
+				break;
+			}
+			List<GeographicPoint> neighbors = getNeighbors(curr);
+			ListIterator<GeographicPoint> it = neighbors.listIterator(neighbors.size());
+			while (it.hasPrevious()) {
+				GeographicPoint next = it.previous();
+				if (!visited.contains(next)) {
+					visited.add(next);
+					parentMap.put(next, curr);
+					toExplore.add(next);
+				}
+			}
+		}
 
-		return null;
+		if (!found) {
+			System.out.println("No path exists");
+			return new ArrayList<GeographicPoint>();
+		}
+		// reconstruct the path
+		LinkedList<GeographicPoint> path = new LinkedList<GeographicPoint>();
+		GeographicPoint curr = goal;
+		while (curr != start) {
+			path.addFirst(curr);
+			curr = parentMap.get(curr);
+		}
+		path.addFirst(start);
+		return path;
+
 	}
 	
+
+	private List<GeographicPoint> getNeighbors(GeographicPoint curr) {
+		// TODO Auto-generated method stub
+		List<GeographicPoint> neighbors = new ArrayList<>();
+		for (Edge edge : map.get(curr)) {
+			neighbors.add(edge.end);
+		}
+		return neighbors;
+	}
 
 	/** Find the path from start to goal using Dijkstra's algorithm
 	 * 
@@ -197,7 +269,53 @@ public class MapGraph {
 		return null;
 	}
 
-	
+	class Edge{
+		private GeographicPoint end;
+		private String roadName;
+		private String roadType;
+		private double length;
+		
+		public Edge(GeographicPoint to, String roadName, String roadType, double length) {
+			this.end = to;
+			this.roadName = roadName;
+			this.roadType = roadType;
+			this.length = length;
+		}
+
+		public GeographicPoint getEnd() {
+			return end;
+		}
+
+		public void setEnd(GeographicPoint end) {
+			this.end = end;
+		}
+
+		public String getRoadName() {
+			return roadName;
+		}
+
+		public void setRoadName(String roadName) {
+			this.roadName = roadName;
+		}
+
+		public String getRoadType() {
+			return roadType;
+		}
+
+		public void setRoadType(String roadType) {
+			this.roadType = roadType;
+		}
+
+		public double getLength() {
+			return length;
+		}
+
+		public void setLength(double length) {
+			this.length = length;
+		}
+		
+		
+	}
 	
 	public static void main(String[] args)
 	{
