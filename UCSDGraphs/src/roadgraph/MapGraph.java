@@ -1,7 +1,7 @@
 /**
  * @author UCSD MOOC development team and YOU
  * 
- * A class which reprsents a graph of geographic locations
+ * A class which represents a graph of geographic locations
  * Nodes in the graph are intersections between 
  *
  */
@@ -30,58 +30,51 @@ import util.GraphLoader;
  *
  */
 public class MapGraph {
-	//TODO: Add your member variables here in WEEK 3
-//	private Set<GeographicPoint> vertices;
 	private Map<GeographicPoint,List<Edge>> map;
-	/** 
+	
+	/** WEEK 3
 	 * Create a new empty MapGraph 
 	 */
 	public MapGraph()
 	{
-		// TODO: Implement in this constructor in WEEK 3
-//		vertices = new HashSet<>();
 		map = new HashMap<GeographicPoint,List<Edge>>();
 	}
 	
-	/**
+	/** WEEK 3
 	 * Get the number of vertices (road intersections) in the graph
 	 * @return The number of vertices in the graph.
 	 */
 	public int getNumVertices()
 	{
-		//TODO: Implement this method in WEEK 3
 		return map.size();
 	}
 	
-	/**
+	/** WEEK 3
 	 * Return the intersections, which are the vertices in this graph.
 	 * @return The vertices in this graph as GeographicPoints
 	 */
 	public Set<GeographicPoint> getVertices()
 	{
-		//TODO: Implement this method in WEEK 3
 		return map.keySet();
 	}
 	
-	/**
+	/** WEEK 3
 	 * Get the number of road segments in the graph
 	 * @return The number of edges in the graph.
 	 */
-	public int getNumEdges()
-	{
-		//TODO: Implement this method in WEEK 3
-		
+	public int getNumEdges(){
 		int numEdges = 0;
 		
-		for (GeographicPoint geographicPoint : map.keySet()) {
+		for (GeographicPoint geographicPoint : map.keySet())
 			numEdges += map.get(geographicPoint).size();
-		}
+
 		return numEdges;
 	}
 
 	
 	
-	/** Add a node corresponding to an intersection at a Geographic Point
+	/** WEEK 3 
+	 * Add a node corresponding to an intersection at a Geographic Point
 	 * If the location is already in the graph or null, this method does 
 	 * not change the graph.
 	 * @param location  The location of the intersection
@@ -90,13 +83,15 @@ public class MapGraph {
 	 */
 	public boolean addVertex(GeographicPoint location)
 	{
-		// TODO: Implement this method in WEEK 3
 		List<Edge> edgeList = new ArrayList<>();
-		if(map.put(location, edgeList) == null) return true;
-		return false; //vertices.add(location);
+		
+		if(location !=null && map.putIfAbsent(location, edgeList) == null)
+			return true;
+		
+		return false;
 	}
 	
-	/**
+	/** WEEK 3
 	 * Adds a directed edge to the graph from pt1 to pt2.  
 	 * Precondition: Both GeographicPoints have already been added to the graph
 	 * @param from The starting point of the edge
@@ -109,18 +104,15 @@ public class MapGraph {
 	 *   or if the length is less than 0.
 	 */
 	public void addEdge(GeographicPoint from, GeographicPoint to, String roadName,
-			String roadType, double length) throws IllegalArgumentException {
+						String roadType, double length) throws IllegalArgumentException {
 
-		//TODO: Implement this method in WEEK 3
-		
 		Edge edge = new Edge(to, roadName, roadType, length);
 		map.get(from).add(edge);
-		
-		
 	}
 	
 
-	/** Find the path from start to goal using breadth first search
+	/** WEEK 3
+	 * Find the path from start to goal using breadth first search
 	 * 
 	 * @param start The starting location
 	 * @param goal The goal location
@@ -133,7 +125,8 @@ public class MapGraph {
         return bfs(start, goal, temp);
 	}
 	
-	/** Find the path from start to goal using breadth first search
+	/** WEEK 3
+	 * Find the path from start to goal using breadth first search
 	 * 
 	 * @param start The starting location
 	 * @param goal The goal location
@@ -142,14 +135,9 @@ public class MapGraph {
 	 *   path from start to goal (including both start and goal).
 	 */
 	public List<GeographicPoint> bfs(GeographicPoint start, 
-			 					     GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
-	{
-		// TODO: Implement this method in WEEK 3
+			 					     GeographicPoint goal, Consumer<GeographicPoint> nodeSearched){
 		
-		// Hook for visualization.  See writeup.
-		//nodeSearched.accept(next.getLocation());
-		
-		if (start == null || goal == null) {
+		if (start == null || goal == null || nodeSearched == null) {
 			System.out.println("Start or goal node is null!  No path exists.");
 			return new LinkedList<GeographicPoint>();
 		}
@@ -180,13 +168,21 @@ public class MapGraph {
 
 		if (!found) {
 			System.out.println("No path exists");
-			return new ArrayList<GeographicPoint>();
+			return null;
 		}
 		
 		return reconstructPath(start, goal, parentMap);
-
 	}
 	
+	/** WEEK 3
+	 * Reconstruct the path for return in bfs method
+	 * 
+	 * @param start The starting location
+	 * @param goal The goal location
+	 * @param parentMap The path, on which did search from start to goal
+	 * @return The list of intersections that form the shortest (unweighted)
+	 *   path from start to goal (including both start and goal).
+	 */
 	private LinkedList<GeographicPoint> reconstructPath(GeographicPoint start, GeographicPoint goal, 
 														HashMap<GeographicPoint, GeographicPoint> parentMap){
 		
@@ -199,11 +195,20 @@ public class MapGraph {
 		path.addFirst(start);
 		return path;
 	}
-
-	private List<GeographicPoint> getNeighbors(GeographicPoint curr) {
-		// TODO Auto-generated method stub
+	
+	/** WEEK 3
+	 * Finding neighbors for given point
+	 * 
+	 * @param point Point to find neighbors 
+	 * @return The list of neighbors for given point.
+	 */
+	private List<GeographicPoint> getNeighbors(GeographicPoint point) {
+		
+		if(point == null)
+			return null;
+		
 		List<GeographicPoint> neighbors = new ArrayList<>();
-		for (Edge edge : map.get(curr)) {
+		for (Edge edge : map.get(point)) {
 			neighbors.add(edge.end);
 		}
 		return neighbors;
@@ -273,13 +278,23 @@ public class MapGraph {
 		
 		return null;
 	}
-
+	
+	
+	/** WEEK 3
+	 * A local class which represents road between intersections (edges between nodes)
+	 */
 	class Edge{
 		private GeographicPoint end;
 		private String roadName;
 		private String roadType;
 		private double length;
 		
+		/** WEEK 3
+		 * Create a new edge
+		 * @param roadName The name of road
+		 * @param roadType The type of road 
+		 * @param length The length of road 
+		 */
 		public Edge(GeographicPoint to, String roadName, String roadType, double length) {
 			this.end = to;
 			this.roadName = roadName;
@@ -287,39 +302,6 @@ public class MapGraph {
 			this.length = length;
 		}
 
-		public GeographicPoint getEnd() {
-			return end;
-		}
-
-		public void setEnd(GeographicPoint end) {
-			this.end = end;
-		}
-
-		public String getRoadName() {
-			return roadName;
-		}
-
-		public void setRoadName(String roadName) {
-			this.roadName = roadName;
-		}
-
-		public String getRoadType() {
-			return roadType;
-		}
-
-		public void setRoadType(String roadType) {
-			this.roadType = roadType;
-		}
-
-		public double getLength() {
-			return length;
-		}
-
-		public void setLength(double length) {
-			this.length = length;
-		}
-		
-		
 	}
 	
 	public static void main(String[] args)
@@ -347,6 +329,8 @@ public class MapGraph {
 		List<GeographicPoint> testroute = simpleTestMap.bfs(testStart,testEnd);
 		
 		System.out.println(testroute);
+		System.out.println(testroute.size());
+		
 		/*
 		 * 
 		System.out.println("Test 1 using simpletest: Dijkstra should be 9 and AStar should be 5");
