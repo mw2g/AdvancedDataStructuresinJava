@@ -9,12 +9,15 @@ package roadgraph;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -244,7 +247,45 @@ public class MapGraph {
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
 		
-		return null;
+		if (start == null || goal == null || nodeSearched == null) {
+			System.out.println("Start or goal node is null!  No path exists.");
+			return new LinkedList<GeographicPoint>();
+		}
+		HashSet<GeographicPoint> visited = new HashSet<GeographicPoint>();
+		double distance = 999999999;
+		PriorityQueue<List<Object>> toExplore = new PriorityQueue<>((a,b) -> (int)a.get(1) - (int)b.get(1));
+		HashMap<GeographicPoint, GeographicPoint> parentMap = new HashMap<GeographicPoint, GeographicPoint>();
+		List<Object> pD = Arrays.asList(start, distance);
+		toExplore.add(pD);
+		boolean found = false;
+		while (!toExplore.isEmpty()) {
+			GeographicPoint curr = (GeographicPoint) toExplore.remove().get(0);
+			if (!visited.contains(curr)) {
+				visited.add(curr);
+				if (curr.getX() == goal.getX() && curr.getY() == goal.getY()) {
+					found = true;
+					break;
+				}
+				List<GeographicPoint> neighbors = getNeighbors(curr);
+				ListIterator<GeographicPoint> it = neighbors.listIterator(neighbors.size());
+				while (it.hasPrevious()) {
+					GeographicPoint next = it.previous();
+					if (!visited.contains(next)) {
+						nodeSearched.accept(next);
+						parentMap.put(next, curr);
+						List<Object> pD1 = Arrays.asList(next, distance);
+						toExplore.add(pD1);
+					}
+				}
+			}
+		}
+
+		if (!found) {
+			System.out.println("No path exists");
+			return null;
+		}
+		
+		return reconstructPath(start, goal, parentMap);
 	}
 
 	/** Find the path from start to goal using A-Star search
