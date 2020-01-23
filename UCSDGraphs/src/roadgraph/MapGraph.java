@@ -374,12 +374,7 @@ public class MapGraph {
 		        if ((double)x.get(2) > (double)y.get(2)) {
 		            return 1;
 		        }
-		        if ((double)x.get(1) < (double)y.get(1)) {
-		            return -1;
-		        }
-		        if ((double)x.get(1) > (double)y.get(1)) {
-		            return 1;
-		        }
+		        
 		        return 0;
 			}
 		});
@@ -481,65 +476,65 @@ public class MapGraph {
 	
 	public static void main(String[] args)
 	{
-//		System.out.print("Making a new map...");
-//		MapGraph firstMap = new MapGraph();
-//		System.out.print("DONE. \nLoading the map...");
-//		GraphLoader.loadRoadMap("data/testdata/simpletest.map", firstMap);
-//		System.out.println("DONE.");
-//		
-//		// You can use this method for testing.  
-//		
-//		
-//		/* Here are some test cases you should try before you attempt 
-//		 * the Week 3 End of Week Quiz, EVEN IF you score 100% on the 
-//		 * programming assignment.
-//		 */
-//		
-//		MapGraph simpleTestMap = new MapGraph();
-//		GraphLoader.loadRoadMap("data/testdata/simpletest.map", simpleTestMap);
-//		
-//		GeographicPoint testStart = new GeographicPoint(1.0, 1.0);
-//		GeographicPoint testEnd = new GeographicPoint(8.0, -1.0);
-//		
-////		List<GeographicPoint> testroute = simpleTestMap.bfs(testStart,testEnd);
-//		
-//		
-//		
-//		System.out.println("Test 1 using simpletest: Dijkstra should be 9 and AStar should be 5");
-//		List<GeographicPoint> testroute = simpleTestMap.dijkstra(testStart,testEnd);
-//		List<GeographicPoint> testroute2 = simpleTestMap.aStarSearch(testStart,testEnd);
-//		
-////		System.out.println(testroute);
-////		System.out.println(testroute.size());
-////		System.out.println(testroute2);
-////		System.out.println(testroute2.size());
-//		
-//		MapGraph testMap = new MapGraph();
-//		GraphLoader.loadRoadMap("data/maps/utc.map", testMap);
-//		
-//		// A very simple test using real data
-//		testStart = new GeographicPoint(32.869423, -117.220917);
-//		testEnd = new GeographicPoint(32.869255, -117.216927);
-//		System.out.println("Test 2 using utc: Dijkstra should be 13 and AStar should be 5");
-//		testroute = testMap.dijkstra(testStart,testEnd);
-//		testroute2 = testMap.aStarSearch(testStart,testEnd);
-//		
-////		System.out.println(testroute);
-////		System.out.println(testroute.size());
-////		System.out.println(testroute2);
-////		System.out.println(testroute2.size());
-//		
-//		// A slightly more complex test using real data
-//		testStart = new GeographicPoint(32.8674388, -117.2190213);
-//		testEnd = new GeographicPoint(32.8697828, -117.2244506);
-//		System.out.println("Test 3 using utc: Dijkstra should be 37 and AStar should be 10");
-//		testroute = testMap.dijkstra(testStart,testEnd);
-//		testroute2 = testMap.aStarSearch(testStart,testEnd);
-//		
-////		System.out.println(testroute);
-////		System.out.println(testroute.size());
-////		System.out.println(testroute2);
-////		System.out.println(testroute2.size());
+		System.out.print("Making a new map...");
+		MapGraph firstMap = new MapGraph();
+		System.out.print("DONE. \nLoading the map...");
+		GraphLoader.loadRoadMap("data/testdata/simpletest.map", firstMap);
+		System.out.println("DONE.");
+		
+		// You can use this method for testing.  
+		
+		
+		/* Here are some test cases you should try before you attempt 
+		 * the Week 3 End of Week Quiz, EVEN IF you score 100% on the 
+		 * programming assignment.
+		 */
+		
+		MapGraph simpleTestMap = new MapGraph();
+		GraphLoader.loadRoadMap("data/testdata/simpletest.map", simpleTestMap);
+		
+		GeographicPoint testStart = new GeographicPoint(1.0, 1.0);
+		GeographicPoint testEnd = new GeographicPoint(8.0, -1.0);
+		
+//		List<GeographicPoint> testroute = simpleTestMap.bfs(testStart,testEnd);
+		
+		
+		
+		System.out.println("Test 1 using simpletest: Dijkstra should be 9 and AStar should be 5");
+		List<GeographicPoint> testroute = simpleTestMap.dijkstra(testStart,testEnd);
+		List<GeographicPoint> testroute2 = simpleTestMap.aStarSearch(testStart,testEnd);
+		
+//		System.out.println(testroute);
+//		System.out.println(testroute.size());
+//		System.out.println(testroute2);
+//		System.out.println(testroute2.size());
+		
+		MapGraph testMap = new MapGraph();
+		GraphLoader.loadRoadMap("data/maps/utc.map", testMap);
+		
+		// A very simple test using real data
+		testStart = new GeographicPoint(32.869423, -117.220917);
+		testEnd = new GeographicPoint(32.869255, -117.216927);
+		System.out.println("Test 2 using utc: Dijkstra should be 13 and AStar should be 5");
+		testroute = testMap.dijkstra(testStart,testEnd);
+		testroute2 = testMap.aStarSearch(testStart,testEnd);
+		
+//		System.out.println(testroute);
+//		System.out.println(testroute.size());
+//		System.out.println(testroute2);
+//		System.out.println(testroute2.size());
+		
+		// A slightly more complex test using real data
+		testStart = new GeographicPoint(32.8674388, -117.2190213);
+		testEnd = new GeographicPoint(32.8697828, -117.2244506);
+		System.out.println("Test 3 using utc: Dijkstra should be 37 and AStar should be 10");
+		testroute = testMap.dijkstra(testStart,testEnd);
+		testroute2 = testMap.aStarSearch(testStart,testEnd);
+		
+//		System.out.println(testroute);
+//		System.out.println(testroute.size());
+//		System.out.println(testroute2);
+//		System.out.println(testroute2.size());
 		
 		
 		/* Use this code in Week 3 End of Week Quiz */
