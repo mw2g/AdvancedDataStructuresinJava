@@ -276,13 +276,12 @@ public class MapGraph {
 			@Override
 			public int compare(List<Object> x, List<Object> y) {
 				
-				if ((double)x.get(1) < (double)y.get(1)) {
-		            return -1;
-		        }
-		        if ((double)x.get(1) > (double)y.get(1)) {
-		            return 1;
-		        }
-		        return 0;
+				int result = Integer.compare((int)x.get(2), (int)y.get(2));
+				
+				if(result == 0)
+					result = Double.compare((double)x.get(1), (double)y.get(1));
+				
+				return result;
 			}
 		});
 		
@@ -312,7 +311,8 @@ public class MapGraph {
 						}
 						if (allDist  < distanceNext) {
 							parentMap.put(next, (GeographicPoint) curr.get(0));
-							List<Object> pD1 = Arrays.asList(next, allDist);
+							int roadClass = getEdge((GeographicPoint) curr.get(0), next).getRoadClass();
+							List<Object> pD1 = Arrays.asList(next, allDist, roadClass);
 							toExplore.add(pD1);
 						}
 					}
@@ -368,14 +368,15 @@ public class MapGraph {
 			@Override
 			public int compare(List<Object> x, List<Object> y) {
 				
-				if ((double)x.get(2) < (double)y.get(2)) {
-		            return -1;
-		        }
-		        if ((double)x.get(2) > (double)y.get(2)) {
-		            return 1;
-		        }
-		        
-		        return 0;
+				int result = Integer.compare((int)x.get(3), (int)y.get(3));
+				
+				if(result == 0)
+					result = Double.compare((double)x.get(2), (double)y.get(2));
+				
+				if(result == 0)
+					result = Double.compare((double)x.get(1), (double)y.get(1));
+				
+				return result;
 			}
 		});
 		
@@ -398,6 +399,7 @@ public class MapGraph {
 					GeographicPoint next = it.previous();
 					if (!visited.contains(next)) {
 						nodeSearched.accept(next);
+						int roadClass = getEdge((GeographicPoint) curr.get(0), next).getRoadClass();
 						double allDist = ((double) curr.get(1)) + getEdge((GeographicPoint) curr.get(0), next).getLength();
 						double distanceNext = 99999999.99;
 						for (List<Object> exp : toExplore) {
@@ -407,7 +409,7 @@ public class MapGraph {
 						if (allDist  < distanceNext) {
 							goalDist = goal.distance(next);
 							parentMap.put(next, (GeographicPoint) curr.get(0));
-							List<Object> pD1 = Arrays.asList(next, allDist, goalDist);
+							List<Object> pD1 = Arrays.asList(next, allDist,  goalDist, roadClass);
 							toExplore.add(pD1);
 						}
 					}
@@ -434,6 +436,7 @@ public class MapGraph {
 		private String roadName;
 		private String roadType;
 		private double length;
+		private int roadClass;
 		
 		/** WEEK 3
 		 * Create a new edge
@@ -446,6 +449,39 @@ public class MapGraph {
 			this.setRoadName(roadName);
 			this.setRoadType(roadType);
 			this.length = length;
+			switch (roadType) {
+			case "motorway":
+				setRoadClass(1);
+				break;
+			case "motorway_link":
+				setRoadClass(2);
+				break;
+			case "primary":
+				setRoadClass(3);
+				break;
+			case "secondary":
+				setRoadClass(4);
+				break;
+			case "tertiary":
+				setRoadClass(5);
+				break;
+			case "city street":
+				setRoadClass(6);
+				break;
+			case "connector":
+				setRoadClass(7);
+				break;
+			case "residential":
+				setRoadClass(8);
+				break;
+			case "living_street":
+				setRoadClass(9);
+				break;
+
+			default:
+				setRoadClass(10);
+				break;
+			}
 		}
 
 		public double getLength() {
@@ -470,6 +506,14 @@ public class MapGraph {
 
 		public void setRoadName(String roadName) {
 			this.roadName = roadName;
+		}
+
+		public int getRoadClass() {
+			return roadClass;
+		}
+
+		public void setRoadClass(int roadClass) {
+			this.roadClass = roadClass;
 		}
 
 	}
